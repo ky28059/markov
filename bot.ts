@@ -28,7 +28,10 @@ client.on('interactionCreate', async (interaction) => {
     switch (interaction.commandName) {
         case 'markov':
             const tokens = predictFOFromWeights(await weights);
-            return interaction.reply(tokens.join(' '));
+            return interaction.reply({
+                content: tokens.join(' '),
+                allowedMentions: { parse: [] }
+            });
     }
 });
 
