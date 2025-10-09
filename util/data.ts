@@ -19,3 +19,8 @@ export async function saveWeights(key: string, weights: Weights) {
         }])),
     }));
 }
+
+export async function loadWeights(key: string) {
+    const raw = await readFile(`./data/${key}.json`);
+    return JSON.parse(raw.toString());
+}
