@@ -4,6 +4,10 @@ import { REST, Routes, SlashCommandBuilder } from 'discord.js';
 const commands = [
     new SlashCommandBuilder()
         .setName('markov')
+        .setDescription('Generate some second-order Markov babble.')
+        .toJSON(),
+    new SlashCommandBuilder()
+        .setName('markov-fo')
         .setDescription('Generate some first-order Markov babble.')
         .toJSON()
 ]

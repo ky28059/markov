@@ -1,9 +1,10 @@
 import { Client } from 'discord.js';
-import { predictFOFromWeights } from './util/predict';
+import { predictFOFromWeights, predictSOFromWeights } from './util/predict';
 import { loadWeights } from './util/data';
 
 
-const weights = loadWeights('first_ord_words');
+const foWeights = loadWeights('first_ord_words');
+const soWeights = loadWeights('second_ord_words');
 
 const client = new Client({
     intents: [
@@ -27,9 +28,17 @@ client.on('interactionCreate', async (interaction) => {
 
     switch (interaction.commandName) {
         case 'markov':
-            const tokens = predictFOFromWeights(await weights);
+            const init = predictFOFromWeights(await foWeights)[0];
+            const sTokens = predictSOFromWeights(await soWeights, init);
             return interaction.reply({
-                content: tokens.join(' '),
+                content: sTokens.join(' '),
+                allowedMentions: { parse: [] }
+            });
+
+        case 'markov-fo':
+            const fTokens = predictFOFromWeights(await foWeights);
+            return interaction.reply({
+                content: fTokens.join(' '),
                 allowedMentions: { parse: [] }
             });
     }
