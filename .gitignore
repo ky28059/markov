@@ -1,0 +1,6 @@
+.idea
+node_modules
+.env
+
+data/messages.json
+data/most_recent.json

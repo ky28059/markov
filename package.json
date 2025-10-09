@@ -1,0 +1,16 @@
+{
+  "name": "markov",
+  "description": "b01lers markov bot.",
+  "main": "bot.ts",
+  "dependencies": {
+    "@types/node": "^20.9.0",
+    "discord.js": "^14.23.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "start": "ts-node bot.ts",
+    "fetch:all": "node -r ts-node/register --env-file=.env scripts/fetchMessages.ts",
+    "registerSlashCommands": "ts-node registerSlashCommands.ts"
+  }
+}
