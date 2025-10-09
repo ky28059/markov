@@ -1,0 +1,7 @@
+services:
+    markov:
+        container_name: markov
+        build:
+            dockerfile: ./Dockerfile
+            context: .
+        restart: always

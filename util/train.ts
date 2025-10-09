@@ -8,7 +8,7 @@ export function getTokens(text: string) {
 }
 
 export const EOF = '\x00';
-export const SEP = '\x01'
+export const SEP = '\x01';
 
 export function updateStartTokenWeight(weight: Weights, token: string) {
     updateWeightsForToken(weight, EOF, token);
@@ -24,7 +24,7 @@ export function updateWeightsForToken(weights: Weights, token: string, n: string
     // Update the count for the current token
     let counts = weights.get(token);
     if (!counts) {
-        counts = new Map()
+        counts = new Map();
         weights.set(token, counts);
     }
 
