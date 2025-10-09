@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node -r ts-node/register --env-file=.env bot.ts",
-    "fetch:all": "node -r ts-node/register --env-file=.env scripts/fetchMessages.ts",
+    "fetch": "node -r ts-node/register --env-file=.env scripts/fetchMessages.ts",
     "train": "ts-node scripts/trainMarkov.ts",
     "test": "ts-node scripts/testMarkov.ts",
     "registerSlashCommands": "node -r ts-node/register --env-file=.env registerSlashCommands.ts"
