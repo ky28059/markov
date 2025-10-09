@@ -3,7 +3,8 @@ import { getTokens, updateStartTokenWeight, updateWeightsForToken, Weights } fro
 
 
 ;(async () => {
-    const weights: Weights = { total: 0, counts: new Map() };
+    const weights: Weights = new Map();
+    let total = 0;
 
     const messages = await getMessages();
 
@@ -17,7 +18,8 @@ import { getTokens, updateStartTokenWeight, updateWeightsForToken, Weights } fro
             updateWeightsForToken(weights, tokens[i], tokens[i + 1]);
         }
 
-        console.log('Processed tokens:', weights.total);
+        total += tokens.length;
+        console.log('Processed tokens:', total);
     }
 
     await saveWeights('first_ord_words', weights);

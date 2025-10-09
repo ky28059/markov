@@ -3,13 +3,13 @@ import { EOF, Weights } from './train';
 
 export function predictFromWeights(weights: Weights) {
     const ret: string[] = [];
-    let w = [...weights.counts.get(EOF)!.counts.entries()];
+    let w = [...weights.get(EOF)!.entries()];
 
     while (true) {
         const pred = weightedRandom(w);
         if (pred === EOF) return ret;
         ret.push(pred);
-        w = [...weights.counts.get(pred)!.counts.entries()];
+        w = [...weights.get(pred)!.entries()];
     }
 }
 

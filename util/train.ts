@@ -1,18 +1,6 @@
-export type Weights = {
-    total: number,
-    counts: Map<string, {
-        total: number,
-        counts: Map<string, number>
-    }>
-}
+export type Weights = Map<string, Map<string, number>>
+export type SerializedWeights = Record<string, Record<string, number>>
 
-export type SerializedWeights = {
-    total: number,
-    counts: Record<string, {
-        total: number,
-        counts: Record<string, number>
-    }>
-}
 
 export function getTokens(text: string) {
     // TODO: fancier tokenization?
@@ -27,17 +15,15 @@ export function updateStartTokenWeight(weight: Weights, token: string) {
 
 export function updateWeightsForToken(weights: Weights, token: string, n: string | undefined) {
     const next = n ?? EOF;
-    weights.total++;
 
     // Update the count for the current token
-    let counts = weights.counts.get(token);
+    let counts = weights.get(token);
     if (!counts) {
-        counts = { total: 0, counts: new Map() }
-        weights.counts.set(token, counts);
+        counts = new Map()
+        weights.set(token, counts);
     }
-    counts.total++;
 
     // Update the count for the next token
-    if (!counts.counts.get(next)) counts.counts.set(next, 0);
-    counts.counts.set(next, counts.counts.get(next)! + 1);
+    if (!counts.get(next)) counts.set(next, 0);
+    counts.set(next, counts.get(next)! + 1);
 }

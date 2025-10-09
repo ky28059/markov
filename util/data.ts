@@ -11,13 +11,9 @@ export async function getMessages() {
 
 export async function saveWeights(key: string, weights: Weights) {
     // We have to handle maps a bit carefully, since they don't JSON stringify well.
-    await writeFile(`./data/${key}.json`, JSON.stringify({
-        total: weights.total,
-        counts: Object.fromEntries([...weights.counts.entries()].map(([k, v]) => [k, {
-            total: v.total,
-            counts: Object.fromEntries(v.counts),
-        }])),
-    }));
+    await writeFile(`./data/${key}.json`, JSON.stringify(
+        Object.fromEntries([...weights.entries()].map(([k, v]) => [k, Object.fromEntries(v)])),
+    ));
 }
 
 export async function loadWeights(key: string): Promise<Weights> {
@@ -26,11 +22,5 @@ export async function loadWeights(key: string): Promise<Weights> {
 
     // Again, map back to `Map`s to handle quirky tokens
     // TODO: is this necessary?
-    return {
-        total: tmp.total,
-        counts: new Map(Object.entries(tmp.counts).map(([k, v]) => [k, {
-            total: v.total,
-            counts: new Map(Object.entries(v.counts))
-        }]))
-    }
+    return new Map(Object.entries(tmp).map(([k, v]) => [k, new Map(Object.entries(v))]));
 }
