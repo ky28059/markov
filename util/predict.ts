@@ -1,7 +1,7 @@
 import { EOF, Weights } from './train';
 
 
-export function predictFromWeights(weights: Weights) {
+export function predictFOFromWeights(weights: Weights) {
     const ret: string[] = [];
     let w = [...weights.get(EOF)!.entries()];
 

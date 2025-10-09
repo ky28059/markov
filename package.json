@@ -9,10 +9,10 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "start": "ts-node bot.ts",
+    "start": "node -r ts-node/register --env-file=.env bot.ts",
     "fetch:all": "node -r ts-node/register --env-file=.env scripts/fetchMessages.ts",
     "train": "ts-node scripts/trainMarkov.ts",
     "test": "ts-node scripts/testMarkov.ts",
-    "registerSlashCommands": "ts-node registerSlashCommands.ts"
+    "registerSlashCommands": "node -r ts-node/register --env-file=.env registerSlashCommands.ts"
   }
 }
