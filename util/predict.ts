@@ -1,4 +1,4 @@
-import { EOF, Weights } from './train';
+import { EOF, SEP, Weights } from './train';
 
 
 export function predictFOFromWeights(weights: Weights) {
@@ -10,6 +10,26 @@ export function predictFOFromWeights(weights: Weights) {
         if (pred === EOF) return ret;
         ret.push(pred);
         w = [...weights.get(pred)!.entries()];
+    }
+}
+
+export function predictSOFromWeights(weights: Weights, initial: string) {
+    const ret: string[] = [initial];
+
+    let tok1 = EOF;
+    let tok2 = initial;
+
+    let w = [...weights.get(tok1 + SEP + tok2)!.entries()];
+
+    while (true) {
+        const pred = weightedRandom(w);
+        if (pred === EOF) return ret;
+        ret.push(pred);
+
+        // Shift context window left by one
+        tok1 = tok2;
+        tok2 = pred;
+        w = [...weights.get(tok1 + SEP + tok2)!.entries()];
     }
 }
 
