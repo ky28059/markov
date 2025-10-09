@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import type { Weights } from './train';
+import type { SerializedWeights, Weights } from './train';
 
 const MESSAGE_JSON_PATH = './data/messages.json';
 
@@ -20,7 +20,17 @@ export async function saveWeights(key: string, weights: Weights) {
     }));
 }
 
-export async function loadWeights(key: string) {
+export async function loadWeights(key: string): Promise<Weights> {
     const raw = await readFile(`./data/${key}.json`);
-    return JSON.parse(raw.toString());
+    const tmp = JSON.parse(raw.toString()) as SerializedWeights;
+
+    // Again, map back to `Map`s to handle quirky tokens
+    // TODO: is this necessary?
+    return {
+        total: tmp.total,
+        counts: new Map(Object.entries(tmp.counts).map(([k, v]) => [k, {
+            total: v.total,
+            counts: new Map(Object.entries(v.counts))
+        }]))
+    }
 }
