@@ -58,7 +58,7 @@ client.on('clientReady', async () => {
     await mkdir(`./data/${id}`, { recursive: true });
 
     await writeFile(`./data/${id}/messages.json`, JSON.stringify(data));
-    await writeFile(`./data/${id}/messages_user.json`, JSON.stringify(data));
+    await writeFile(`./data/${id}/messages_user.json`, JSON.stringify(keyed));
     await writeFile(`./data/${id}/most_recent.json`, JSON.stringify(mostRecent));
 
     console.log('Fetch finished :)')
