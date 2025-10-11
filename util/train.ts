@@ -7,6 +7,13 @@ export function getTokens(text: string) {
     return [...text.matchAll(/\S+/g)].map(s => s[0]);
 }
 
+/**
+ * Trains first-order Markov weights on the given messages. The weights are a map of
+ * `{ token => { nextToken => count } }`.
+ *
+ * @param messages The messages to train on.
+ * @returns The trained first-order weights.
+ */
 export async function trainFOWeights(messages: [number, string][]) {
     const weights: Weights = new Map();
     let total = 0;
@@ -29,6 +36,13 @@ export async function trainFOWeights(messages: [number, string][]) {
     return weights;
 }
 
+/**
+ * Trains second-order Markov weights on the given messages. The weights are a map of
+ * `{ tok1 SEP tok2 => { tok3 => count } }`.
+ *
+ * @param messages The messages to train on.
+ * @returns The trained second-order weights.
+ */
 export async function trainSOWeights(messages: [number, string][]) {
     const weights: Weights = new Map();
     let total = 0;
@@ -51,15 +65,15 @@ export async function trainSOWeights(messages: [number, string][]) {
     return weights;
 }
 
-export function updateStartTokenWeight(weight: Weights, token: string) {
+function updateStartTokenWeight(weight: Weights, token: string) {
     updateWeightsForToken(weight, EOF, token);
 }
 
-export function updateHOStartTokenWeight(weight: Weights, tokens: string[], n: string | undefined) {
+function updateHOStartTokenWeight(weight: Weights, tokens: string[], n: string | undefined) {
     updateHOWeightsForToken(weight, [EOF, ...tokens], n);
 }
 
-export function updateWeightsForToken(weights: Weights, token: string, n: string | undefined) {
+function updateWeightsForToken(weights: Weights, token: string, n: string | undefined) {
     const next = n ?? EOF;
 
     // Update the count for the current token
@@ -74,7 +88,7 @@ export function updateWeightsForToken(weights: Weights, token: string, n: string
     counts.set(next, counts.get(next)! + 1);
 }
 
-export function updateHOWeightsForToken(weights: Weights, tokens: string[], n: string | undefined) {
+function updateHOWeightsForToken(weights: Weights, tokens: string[], n: string | undefined) {
     updateWeightsForToken(weights, tokens.join(SEP), n);
 }
 

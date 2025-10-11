@@ -1,6 +1,14 @@
 import { EOF, SEP, Weights } from './train';
 
 
+/**
+ * Given first-order Markov weights, predict a sequence of tokens; this can be done by
+ * starting with the start-of-message token, and continuously applying weighted random until
+ * we reach the end-of-message token.
+ *
+ * @param weights The weights to use.
+ * @returns The predicted token sequence, as a string[].
+ */
 export function predictFOFromWeights(weights: Weights) {
     const ret: string[] = [];
     let w = [...weights.get(EOF)!.entries()];
@@ -13,6 +21,15 @@ export function predictFOFromWeights(weights: Weights) {
     }
 }
 
+/**
+ * Same as `predictFOFromWeights`, but using second-order weights instead. Since this is
+ * second-order, we need an initial token to start; then, we apply [tok1, tok2] -> tok3
+ * until end-of-message.
+ *
+ * @param weights The weights to use.
+ * @param initial The initial token to use; this can be gotten for e.g. by doing a single FO prediction.
+ * @returns The predicted token sequence, as a string[].
+ */
 export function predictSOFromWeights(weights: Weights, initial: string) {
     const ret: string[] = [initial];
 
