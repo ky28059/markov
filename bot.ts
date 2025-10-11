@@ -3,11 +3,20 @@ import { predictFOFromWeights, predictSOFromWeights } from './util/predict';
 import { loadKeyedWeights, loadWeights } from './util/data';
 
 
-const foWeights = loadWeights('first_ord_words');
-const soWeights = loadWeights('second_ord_words');
-
-const foKeyedWeights = loadKeyedWeights('first_ord_words');
-const soKeyedWeights = loadKeyedWeights('second_ord_words');
+const m = {
+    '511675552386777099': {
+        foWeights: loadWeights('first_ord_words'),
+        soWeights: loadWeights('second_ord_words'),
+        foKeyedWeights: loadKeyedWeights('first_ord_words'),
+        soKeyedWeights: loadKeyedWeights('second_ord_words')
+    },
+    '749361934515699722': {
+        foWeights: loadWeights('first_ord_words_cpu'),
+        soWeights: loadWeights('second_ord_words_cpu'),
+        foKeyedWeights: loadKeyedWeights('first_ord_words_cpu'),
+        soKeyedWeights: loadKeyedWeights('second_ord_words_cpu')
+    }
+}
 
 const client = new Client({
     intents: [
@@ -30,13 +39,14 @@ client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
     const user = interaction.options.getUser('mimic');
+    const d = m[interaction.guildId as keyof typeof m];
 
     switch (interaction.commandName) {
         case 'markov':
             // If a user is supplied, use the keyed weights for that use instead
             if (user) {
-                const fw = (await foKeyedWeights)[user.id];
-                const sw = (await soKeyedWeights)[user.id];
+                const fw = (await d.foKeyedWeights)[user.id];
+                const sw = (await d.soKeyedWeights)[user.id];
                 if (!fw || !sw)
                     return // TODO ...
 
@@ -48,8 +58,8 @@ client.on('interactionCreate', async (interaction) => {
                 });
             }
 
-            const init = predictFOFromWeights(await foWeights)[0];
-            const sTokens = predictSOFromWeights(await soWeights, init);
+            const init = predictFOFromWeights(await d.foWeights)[0];
+            const sTokens = predictSOFromWeights(await d.soWeights, init);
             return interaction.reply({
                 content: sTokens.join(' '),
                 allowedMentions: { parse: [] }
@@ -57,7 +67,7 @@ client.on('interactionCreate', async (interaction) => {
 
         case 'markov-fo':
             if (user) {
-                const fw = (await foKeyedWeights)[user.id];
+                const fw = (await d.foKeyedWeights)[user.id];
                 if (!fw)
                     return // TODO ...
 
@@ -68,7 +78,7 @@ client.on('interactionCreate', async (interaction) => {
                 });
             }
 
-            const fTokens = predictFOFromWeights(await foWeights);
+            const fTokens = predictFOFromWeights(await d.foWeights);
             return interaction.reply({
                 content: fTokens.join(' '),
                 allowedMentions: { parse: [] }
