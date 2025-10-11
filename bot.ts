@@ -5,7 +5,7 @@ import { loadKeyedWeights, loadWeights } from './util/data';
 
 const servers = ['511675552386777099', '749361934515699722'];
 
-const m = Object.fromEntries(servers.map((id) => [id, {
+const weights = Object.fromEntries(servers.map((id) => [id, {
     foWeights: loadWeights('first_ord_words', id),
     soWeights: loadWeights('second_ord_words', id),
     foKeyedWeights: loadKeyedWeights('first_ord_words', id),
@@ -33,7 +33,7 @@ client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
     const user = interaction.options.getUser('mimic');
-    const d = m[interaction.guildId as keyof typeof m];
+    const d = weights[interaction.guildId!];
 
     switch (interaction.commandName) {
         case 'markov':

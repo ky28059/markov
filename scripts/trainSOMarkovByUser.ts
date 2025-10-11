@@ -6,7 +6,7 @@ import { trainSOWeights, Weights } from '../util/train';
     const id = process.argv[2] ?? '511675552386777099';
     console.log('Training weights for', id);
 
-    const data = await getKeyedMessages();
+    const data = await getKeyedMessages(id);
     const ret: Record<string, Weights> = {};
 
     for (const [id, messages] of Object.entries(data)) {

@@ -6,7 +6,7 @@ import { trainSOWeights } from '../util/train';
     const id = process.argv[2] ?? '511675552386777099';
     console.log('Training weights for', id);
 
-    const messages = await getMessages();
+    const messages = await getMessages(id);
     const weights = await trainSOWeights(messages);
 
     await saveWeights('second_ord_words', id, weights);

@@ -1,5 +1,5 @@
 import { Client, Message, TextBasedChannel } from 'discord.js';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 
 
 const client = new Client({
@@ -11,8 +11,6 @@ const client = new Client({
         "GuildMessageReactions",
         "MessageContent"
     ],
-    // presence: { activities: [{ type: ActivityType.Watching, name: 'y\'all 🥰' }] },
-    allowedMentions: { repliedUser: false }
 });
 
 async function fetchAllMessages(channel: TextBasedChannel) {
@@ -57,9 +55,11 @@ client.on('clientReady', async () => {
         console.log(`Processed ${channel.name}:`, len);
     }));
 
-    await writeFile(`./data/messages_${id}.json`, JSON.stringify(data));
-    await writeFile(`./data/messages_user_${id}.json`, JSON.stringify(data));
-    await writeFile(`./data/most_recent_${id}.json`, JSON.stringify(mostRecent));
+    await mkdir(`./data/${id}`, { recursive: true });
+
+    await writeFile(`./data/${id}/messages.json`, JSON.stringify(data));
+    await writeFile(`./data/${id}/messages_user.json`, JSON.stringify(data));
+    await writeFile(`./data/${id}/most_recent.json`, JSON.stringify(mostRecent));
 
     console.log('Fetch finished :)')
 })

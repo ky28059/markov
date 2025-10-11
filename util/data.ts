@@ -1,20 +1,18 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import type { SerializedWeights, Weights } from './train';
 
 
-export async function getMessages() {
-    const raw = await readFile('./data/messages.json');
+export async function getMessages(id: string) {
+    const raw = await readFile(`./data/${id}/messages.json`);
     return JSON.parse(raw.toString()) as [number, string][];
 }
 
-export async function getKeyedMessages() {
-    const raw = await readFile('./data/messages_user.json');
+export async function getKeyedMessages(id: string) {
+    const raw = await readFile(`./data/${id}/messages_user.json`);
     return JSON.parse(raw.toString()) as Record<string, [number, string][]>;
 }
 
 export async function saveWeights(key: string, id: string, weights: Weights) {
-    await mkdir(`./data/${id}`, { recursive: true });
-
     // We have to handle maps a bit carefully, since they don't JSON stringify well.
     await writeFile(`./data/${id}/${key}.json`, JSON.stringify(
         Object.fromEntries([...weights.entries()].map(([k, v]) => [k, Object.fromEntries(v)])),
@@ -22,8 +20,6 @@ export async function saveWeights(key: string, id: string, weights: Weights) {
 }
 
 export async function saveKeyedWeights(key: string, id: string, data: Record<string, Weights>) {
-    await mkdir(`./data/${id}`, { recursive: true });
-
     // We have to handle maps a bit carefully, since they don't JSON stringify well.
     await writeFile(`./data/${id}/keyed_${key}.json`, JSON.stringify(
         Object.fromEntries(Object.entries(data).map(([k, weights]) => (
