@@ -27,11 +27,16 @@ async function fetchAllMessages(channel: TextBasedChannel) {
 }
 
 client.on('clientReady', async () => {
-    const guild = client.guilds.cache.get('511675552386777099');
-    if (!guild) return;
+    const id = process.argv[2] ?? '511675552386777099';
+    console.log('Fetching messages for', id);
 
+    const guild = client.guilds.cache.get(id);
+    if (!guild) return; // TODO
+
+    const keyed: Record<string, [timestamp: number, content: string][]> = {};
     const data: [number, string][] = [];
     const mostRecent: Record<string, string> = {};
+
     console.log('Starting fetch...')
 
     await Promise.all(guild.channels.cache.map(async (channel) => {
@@ -44,8 +49,8 @@ client.on('clientReady', async () => {
         console.log(`Processed ${channel.name}:`, len);
     }));
 
-    await writeFile('./data/messages.json', JSON.stringify(data));
-    await writeFile('./data/most_recent.json', JSON.stringify(mostRecent));
+    await writeFile(`./data/messages_${id}.json`, JSON.stringify(data));
+    await writeFile(`./data/most_recent_${id}.json`, JSON.stringify(mostRecent));
     console.log('Fetch finished :)')
 })
 
