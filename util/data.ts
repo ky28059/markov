@@ -6,7 +6,7 @@ const MESSAGE_JSON_PATH = './data/messages.json';
 
 export async function getMessages() {
     const raw = await readFile(MESSAGE_JSON_PATH);
-    return JSON.parse(raw.toString()) as string[];
+    return JSON.parse(raw.toString()) as [number, string][];
 }
 
 export async function saveWeights(key: string, weights: Weights) {

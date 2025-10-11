@@ -30,7 +30,9 @@ client.on('clientReady', async () => {
     const guild = client.guilds.cache.get('511675552386777099');
     if (!guild) return;
 
-    const data: [number, string][] = [];
+    const keyed: Record<string, [timestamp: number, content: string][]> = {};
+    let total = 0;
+
     const mostRecent: Record<string, string> = {};
     console.log('Starting fetch...')
 
@@ -38,14 +40,22 @@ client.on('clientReady', async () => {
         if (!channel.isTextBased() || !channel.viewable) return;
 
         const messages = await fetchAllMessages(channel);
-        const len = data.push(...messages.filter(m => !m.author.bot && m.content).map((m) => [m.createdTimestamp, m.content] as [number, string]));
+        const filtered = messages.filter(m => !m.author.bot && m.content);
+
+        // Key messages by user, storing timestamp and content
+        for (const message of filtered) {
+            if (!keyed[message.author.id]) keyed[message.author.id] = [];
+            keyed[message.author.id].push([message.createdTimestamp, message.content]);
+        }
 
         if (messages.length > 0) mostRecent[channel.id] = messages[0].id;
-        console.log(`Processed ${channel.name}:`, len);
+
+        total += filtered.length;
+        console.log(`Processed ${channel.name}:`, total);
     }));
 
-    await writeFile('./data/messages.json', JSON.stringify(data));
-    await writeFile('./data/most_recent.json', JSON.stringify(mostRecent));
+    await writeFile('./data/messages_user.json', JSON.stringify(keyed));
+    await writeFile('./data/most_recent_user.json', JSON.stringify(mostRecent));
     console.log('Fetch finished :)')
 })
 
