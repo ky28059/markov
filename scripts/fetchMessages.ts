@@ -43,14 +43,24 @@ client.on('clientReady', async () => {
         if (!channel.isTextBased() || !channel.viewable) return;
 
         const messages = await fetchAllMessages(channel);
-        const len = data.push(...messages.filter(m => !m.author.bot && m.content).map((m) => [m.createdTimestamp, m.content] as [number, string]));
+        const filtered = messages.filter(m => !m.author.bot && m.content);
+
+        // Key messages by user, storing timestamp and content
+        for (const message of filtered) {
+            if (!keyed[message.author.id]) keyed[message.author.id] = [];
+            keyed[message.author.id].push([message.createdTimestamp, message.content]);
+        }
+
+        const len = data.push(...filtered.map((m) => [m.createdTimestamp, m.content] as [number, string]));
 
         if (messages.length > 0) mostRecent[channel.id] = messages[0].id;
         console.log(`Processed ${channel.name}:`, len);
     }));
 
     await writeFile(`./data/messages_${id}.json`, JSON.stringify(data));
+    await writeFile(`./data/messages_user_${id}.json`, JSON.stringify(data));
     await writeFile(`./data/most_recent_${id}.json`, JSON.stringify(mostRecent));
+
     console.log('Fetch finished :)')
 })
 
