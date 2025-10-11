@@ -5,10 +5,18 @@ const commands = [
     new SlashCommandBuilder()
         .setName('markov')
         .setDescription('Generate some second-order Markov babble.')
+        .addUserOption(option => option
+            .setName('mimic')
+            .setDescription('The user to mimic')
+            .setRequired(false))
         .toJSON(),
     new SlashCommandBuilder()
         .setName('markov-fo')
         .setDescription('Generate some first-order Markov babble.')
+        .addUserOption(option => option
+            .setName('mimic')
+            .setDescription('The user to mimic')
+            .setRequired(false))
         .toJSON()
 ]
 

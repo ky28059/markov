@@ -36,3 +36,14 @@ export async function loadWeights(key: string): Promise<Weights> {
     // TODO: is this necessary?
     return new Map(Object.entries(tmp).map(([k, v]) => [k, new Map(Object.entries(v))]));
 }
+
+export async function loadKeyedWeights(key: string): Promise<Record<string, Weights>> {
+    const raw = await readFile(`./data/keyed_${key}.json`);
+    const tmp = JSON.parse(raw.toString()) as Record<string, SerializedWeights>;
+
+    // Again, map back to `Map`s to handle quirky tokens
+    // TODO: is this necessary?
+    return Object.fromEntries(Object.entries(tmp).map(([k, t]) => (
+        [k, new Map(Object.entries(t).map(([k, v]) => [k, new Map(Object.entries(v))]))]
+    )));
+}
