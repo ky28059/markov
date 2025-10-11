@@ -1,18 +1,30 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import type { SerializedWeights, Weights } from './train';
 
-const MESSAGE_JSON_PATH = './data/messages.json';
-
 
 export async function getMessages() {
-    const raw = await readFile(MESSAGE_JSON_PATH);
+    const raw = await readFile('./data/messages.json');
     return JSON.parse(raw.toString()) as [number, string][];
+}
+
+export async function getKeyedMessages() {
+    const raw = await readFile('./data/messages_user.json');
+    return JSON.parse(raw.toString()) as Record<string, [number, string][]>;
 }
 
 export async function saveWeights(key: string, weights: Weights) {
     // We have to handle maps a bit carefully, since they don't JSON stringify well.
     await writeFile(`./data/${key}.json`, JSON.stringify(
         Object.fromEntries([...weights.entries()].map(([k, v]) => [k, Object.fromEntries(v)])),
+    ));
+}
+
+export async function saveKeyedWeights(key: string, data: Record<string, Weights>) {
+    // We have to handle maps a bit carefully, since they don't JSON stringify well.
+    await writeFile(`./data/keyed_${key}.json`, JSON.stringify(
+        Object.fromEntries(Object.entries(data).map(([k, weights]) => (
+            [k, Object.fromEntries([...weights.entries()].map(([k, v]) => [k, Object.fromEntries(v)]))]
+        )))
     ));
 }
 

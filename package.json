@@ -15,6 +15,9 @@
     "train": "npm run train:fo && npm run train:so",
     "train:fo": "ts-node scripts/trainFOMarkov.ts",
     "train:so": "ts-node scripts/trainSOMarkov.ts",
+    "train:keyed": "npm run train:fo-keyed && npm run train:so-keyed",
+    "train:fo-keyed": "ts-node scripts/trainFOMarkovByUser.ts",
+    "train:so-keyed": "ts-node scripts/trainSOMarkovByUser.ts",
     "test": "ts-node scripts/testMarkov.ts",
     "registerSlashCommands": "node -r ts-node/register --env-file=.env registerSlashCommands.ts"
   }
