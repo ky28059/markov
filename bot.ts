@@ -3,20 +3,14 @@ import { predictFOFromWeights, predictSOFromWeights } from './util/predict';
 import { loadKeyedWeights, loadWeights } from './util/data';
 
 
-const m = {
-    '511675552386777099': {
-        foWeights: loadWeights('first_ord_words'),
-        soWeights: loadWeights('second_ord_words'),
-        foKeyedWeights: loadKeyedWeights('first_ord_words'),
-        soKeyedWeights: loadKeyedWeights('second_ord_words')
-    },
-    '749361934515699722': {
-        foWeights: loadWeights('first_ord_words_cpu'),
-        soWeights: loadWeights('second_ord_words_cpu'),
-        foKeyedWeights: loadKeyedWeights('first_ord_words_cpu'),
-        soKeyedWeights: loadKeyedWeights('second_ord_words_cpu')
-    }
-}
+const servers = ['511675552386777099', '749361934515699722'];
+
+const m = Object.fromEntries(servers.map((id) => [id, {
+    foWeights: loadWeights('first_ord_words', id),
+    soWeights: loadWeights('second_ord_words', id),
+    foKeyedWeights: loadKeyedWeights('first_ord_words', id),
+    soKeyedWeights: loadKeyedWeights('second_ord_words', id)
+}]))
 
 const client = new Client({
     intents: [

@@ -3,6 +3,9 @@ import { trainFOWeights, Weights } from '../util/train';
 
 
 ;(async () => {
+    const id = process.argv[2] ?? '511675552386777099';
+    console.log('Training weights for', id);
+
     const data = await getKeyedMessages();
     const ret: Record<string, Weights> = {};
 
@@ -11,5 +14,5 @@ import { trainFOWeights, Weights } from '../util/train';
         ret[id] = await trainFOWeights(messages);
     }
 
-    await saveKeyedWeights('first_ord_words', ret);
+    await saveKeyedWeights('first_ord_words', id, ret);
 })();

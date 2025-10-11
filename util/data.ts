@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import type { SerializedWeights, Weights } from './train';
 
 
@@ -12,24 +12,28 @@ export async function getKeyedMessages() {
     return JSON.parse(raw.toString()) as Record<string, [number, string][]>;
 }
 
-export async function saveWeights(key: string, weights: Weights) {
+export async function saveWeights(key: string, id: string, weights: Weights) {
+    await mkdir(`./data/${id}`, { recursive: true });
+
     // We have to handle maps a bit carefully, since they don't JSON stringify well.
-    await writeFile(`./data/${key}.json`, JSON.stringify(
+    await writeFile(`./data/${id}/${key}.json`, JSON.stringify(
         Object.fromEntries([...weights.entries()].map(([k, v]) => [k, Object.fromEntries(v)])),
     ));
 }
 
-export async function saveKeyedWeights(key: string, data: Record<string, Weights>) {
+export async function saveKeyedWeights(key: string, id: string, data: Record<string, Weights>) {
+    await mkdir(`./data/${id}`, { recursive: true });
+
     // We have to handle maps a bit carefully, since they don't JSON stringify well.
-    await writeFile(`./data/keyed_${key}.json`, JSON.stringify(
+    await writeFile(`./data/${id}/keyed_${key}.json`, JSON.stringify(
         Object.fromEntries(Object.entries(data).map(([k, weights]) => (
             [k, Object.fromEntries([...weights.entries()].map(([k, v]) => [k, Object.fromEntries(v)]))]
         )))
     ));
 }
 
-export async function loadWeights(key: string): Promise<Weights> {
-    const raw = await readFile(`./data/${key}.json`);
+export async function loadWeights(key: string, id: string): Promise<Weights> {
+    const raw = await readFile(`./data/${id}/${key}.json`);
     const tmp = JSON.parse(raw.toString()) as SerializedWeights;
 
     // Again, map back to `Map`s to handle quirky tokens
@@ -37,8 +41,8 @@ export async function loadWeights(key: string): Promise<Weights> {
     return new Map(Object.entries(tmp).map(([k, v]) => [k, new Map(Object.entries(v))]));
 }
 
-export async function loadKeyedWeights(key: string): Promise<Record<string, Weights>> {
-    const raw = await readFile(`./data/keyed_${key}.json`);
+export async function loadKeyedWeights(key: string, id: string): Promise<Record<string, Weights>> {
+    const raw = await readFile(`./data/${id}/keyed_${key}.json`);
     const tmp = JSON.parse(raw.toString()) as Record<string, SerializedWeights>;
 
     // Again, map back to `Map`s to handle quirky tokens
