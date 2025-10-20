@@ -2,7 +2,8 @@ import { Client } from 'discord.js';
 import { predictFOFromWeights, predictSOFromWeights } from './util/predict';
 import { loadKeyedWeights, loadWeights } from './util/data';
 import { EOF } from './util/train';
-import { textEmbed } from './util/embeds';
+import { paginate, textEmbed } from './util/embeds';
+import { chunked } from './util/misc';
 
 
 const servers = ['511675552386777099', '749361934515699722', '1137980132880040029'];
@@ -95,20 +96,20 @@ client.on('interactionCreate', async (interaction) => {
                 ephemeral: true
             });
 
+            // TODO: limit the number of pages?
             const sum = [...res.values()].reduce((a, b) => a + b, 0);
-            const fields = [...res.entries()]
-                .sort(([, v1], [, v2]) => v2 - v1)
-                .slice(0, 25)
-                .map(([tok, weight], i) => `${i + 1}. **${tok === EOF ? '`EOF`' : tok}**: ${(weight * 100 / sum).toFixed(2)}%`)
-                .join('\n');
+            const entries = [...res.entries()].sort(([, v1], [, v2]) => v2 - v1);
 
-            const weightEmbed = textEmbed(`Successors for token \`${token === EOF ? 'EOF' : token}\`:\n${fields}`)
-                .setTitle(token === EOF ? 'EOF' : token);
+            const embeds = chunked(entries, 10).map((chunk, i) => {
+                const fields = chunk
+                    .map(([tok, weight], j) => `${i * 10 + j + 1}. **${tok === EOF ? '`EOF`' : tok}**: ${(weight * 100 / sum).toFixed(2)}%`)
+                    .join('\n');
 
-            return interaction.reply({
-                embeds: [weightEmbed],
-                allowedMentions: { parse: [] }
-            })
+                return textEmbed(`Successors for token \`${token === EOF ? 'EOF' : token}\`:\n${fields}`)
+                    .setTitle(token === EOF ? 'EOF' : token);
+            });
+
+            return paginate(interaction, embeds);
     }
 });
 
