@@ -17,6 +17,14 @@ const commands = [
             .setName('mimic')
             .setDescription('The user to mimic')
             .setRequired(false))
+        .toJSON(),
+    new SlashCommandBuilder()
+        .setName('markov-weights')
+        .setDescription('Sends the trained Markov chain weights for the given token.')
+        .addStringOption(option => option
+            .setName('token')
+            .setDescription('The token to inspect weights for.')
+            .setRequired(false))
         .toJSON()
 ]
 

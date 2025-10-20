@@ -85,6 +85,30 @@ client.on('interactionCreate', async (interaction) => {
                 content: fTokens.join(' '),
                 allowedMentions: { parse: [] }
             });
+
+        case 'markov-weights':
+            const token = interaction.options.getString('token') ?? EOF;
+            const res = (await d.foWeights).get(token);
+
+            if (!res) return interaction.reply({
+                embeds: [textEmbed(`Token \`${token === EOF ? 'EOF' : token}\` is not present in the weights.`)],
+                ephemeral: true
+            });
+
+            const sum = [...res.values()].reduce((a, b) => a + b, 0);
+            const fields = [...res.entries()]
+                .sort(([, v1], [, v2]) => v2 - v1)
+                .slice(0, 25)
+                .map(([tok, weight], i) => `${i + 1}. **${tok === EOF ? '`EOF`' : tok}**: ${(weight * 100 / sum).toFixed(2)}%`)
+                .join('\n');
+
+            const weightEmbed = textEmbed(`Successors for token \`${token === EOF ? 'EOF' : token}\`:\n${fields}`)
+                .setTitle(token === EOF ? 'EOF' : token);
+
+            return interaction.reply({
+                embeds: [weightEmbed],
+                allowedMentions: { parse: [] }
+            })
     }
 });
 
