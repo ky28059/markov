@@ -7,11 +7,12 @@ import { EOF, SEP, Weights } from './train';
  * we reach the end-of-message token.
  *
  * @param weights The weights to use.
+ * @param initial The initial token to predict from (defaults to the start-of-message token).
  * @returns The predicted token sequence, as a string[].
  */
-export function predictFOFromWeights(weights: Weights) {
-    const ret: string[] = [];
-    let w = [...weights.get(EOF)!.entries()];
+export function predictFOFromWeights(weights: Weights, initial?: string | null) {
+    const ret: string[] = initial ? [initial] : [];
+    let w = [...weights.get(initial ?? EOF)!.entries()];
 
     while (true) {
         const pred = weightedRandom(w);

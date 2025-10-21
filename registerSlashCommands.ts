@@ -9,6 +9,10 @@ const commands = [
             .setName('mimic')
             .setDescription('The user to mimic')
             .setRequired(false))
+        .addStringOption(option => option
+            .setName('token')
+            .setDescription('The token to start prediction with.')
+            .setRequired(false))
         .toJSON(),
     new SlashCommandBuilder()
         .setName('markov-fo')
@@ -16,6 +20,10 @@ const commands = [
         .addUserOption(option => option
             .setName('mimic')
             .setDescription('The user to mimic')
+            .setRequired(false))
+        .addStringOption(option => option
+            .setName('token')
+            .setDescription('The token to start prediction with.')
             .setRequired(false))
         .toJSON(),
     new SlashCommandBuilder()

@@ -67,21 +67,25 @@ client.on('interactionCreate', async (interaction) => {
 
         case 'markov-fo':
             const fUser = interaction.options.getUser('mimic');
-            if (fUser) {
-                const fw = (await d.foKeyedWeights)[fUser.id];
-                if (!fw) return interaction.reply({
-                    embeds: [textEmbed(`No weights found for user ${fUser}.`)],
-                    ephemeral: true
-                });
+            const fInitial = interaction.options.getString('token');
 
-                const fTokens = predictFOFromWeights(fw);
-                return interaction.reply({
-                    content: fTokens.join(' '),
-                    allowedMentions: { parse: [] }
-                });
-            }
+            const fw = fUser
+                ? (await d.foKeyedWeights)[fUser.id]
+                : await d.foWeights;
 
-            const fTokens = predictFOFromWeights(await d.foWeights);
+            // Only nullable if we are using user-keyed weights. TODO?
+            if (!fw) return interaction.reply({
+                embeds: [textEmbed(`No weights found for user ${fUser}.`)],
+                ephemeral: true
+            });
+
+            // If an initial token is supplied, make sure it is in the dataset
+            if (fInitial && !fw.has(fInitial)) return interaction.reply({
+                embeds: [textEmbed(`Token \`${fInitial}\` does not exist in weights.`)],
+                ephemeral: true
+            });
+
+            const fTokens = predictFOFromWeights(fw, fInitial);
             return interaction.reply({
                 content: fTokens.join(' '),
                 allowedMentions: { parse: [] }
