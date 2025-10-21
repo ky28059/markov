@@ -23,7 +23,7 @@ export default {
 
         if (!res) return interaction.reply({
             embeds: [textEmbed(`Token \`${token === EOF ? 'EOF' : token}\` is not present in the weights.`)],
-            ephemeral: true
+            flags: 'Ephemeral'
         });
 
         // TODO: limit the number of pages?

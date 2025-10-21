@@ -31,13 +31,13 @@ export default {
         // Only nullable if we are using user-keyed weights. TODO?
         if (!fw) return interaction.reply({
             embeds: [textEmbed(`No weights found for user ${user}.`)],
-            ephemeral: true
+            flags: 'Ephemeral'
         });
 
         // If an initial token is supplied, make sure it is in the dataset
         if (init && !fw.has(init)) return interaction.reply({
             embeds: [textEmbed(`Token \`${init}\` does not exist in weights.`)],
-            ephemeral: true
+            flags: 'Ephemeral'
         });
 
         const fTokens = predictFOFromWeights(fw, init);

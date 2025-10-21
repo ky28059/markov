@@ -33,13 +33,13 @@ export default {
         // TODO?
         if (!fw || !sw) return interaction.reply({
             embeds: [textEmbed(`No weights found for user ${user}.`)],
-            ephemeral: true
+            flags: 'Ephemeral'
         });
 
         // If an initial token is supplied, make sure it is in the dataset
         if (uInit && !fw.has(uInit)) return interaction.reply({
             embeds: [textEmbed(`Token \`${uInit}\` is not a start token in weights.`)],
-            ephemeral: true
+            flags: 'Ephemeral'
         });
 
         const init = uInit ?? predictFOFromWeights(fw)[0];
