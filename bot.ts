@@ -129,9 +129,10 @@ client.on('interactionCreate', async (interaction) => {
     // Autocomplete `token` fields for first-order commands
     if (interaction.commandName === 'markov-fo' || interaction.commandName === 'markov-weights') {
         const query = interaction.options.getFocused();
-        const options = [...(await d.foWeights).keys()]
-            .filter((s) => s.length <= 100 && s.toLowerCase().includes(query.toLowerCase()))
-            .map((s) => ({ name: s, value: s }))
+        const options = [...(await d.foWeights).entries()]
+            .filter(([s]) => s !== EOF && s.length <= 100 && s.toLowerCase().includes(query.toLowerCase()))
+            .sort(([, v1], [, v2]) => [...v2.values()].reduce((a, b) => a + b, 0) - [...v1.values()].reduce((a, b) => a + b, 0))
+            .map(([s]) => ({ name: s, value: s }))
             .slice(0, 25);
 
         interaction.respond(options);
