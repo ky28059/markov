@@ -24,6 +24,7 @@ const commands = [
         .addStringOption(option => option
             .setName('token')
             .setDescription('The token to start prediction with.')
+            .setAutocomplete(true)
             .setRequired(false))
         .toJSON(),
     new SlashCommandBuilder()
@@ -32,6 +33,7 @@ const commands = [
         .addStringOption(option => option
             .setName('token')
             .setDescription('The token to inspect weights for.')
+            .setAutocomplete(true)
             .setRequired(false))
         .toJSON()
 ]

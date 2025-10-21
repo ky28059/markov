@@ -121,4 +121,21 @@ client.on('interactionCreate', async (interaction) => {
     }
 });
 
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isAutocomplete()) return;
+
+    const d = weights[interaction.guildId!];
+
+    // Autocomplete `token` fields for first-order commands
+    if (interaction.commandName === 'markov-fo' || interaction.commandName === 'markov-weights') {
+        const query = interaction.options.getFocused();
+        const options = [...(await d.foWeights).keys()]
+            .filter((s) => s.length <= 100 && s.toLowerCase().includes(query.toLowerCase()))
+            .map((s) => ({ name: s, value: s }))
+            .slice(0, 25);
+
+        interaction.respond(options);
+    }
+})
+
 void client.login(process.env.TOKEN);
