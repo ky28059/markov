@@ -39,27 +39,31 @@ client.on('interactionCreate', async (interaction) => {
 
     switch (interaction.commandName) {
         case 'markov':
-            const user = interaction.options.getUser('mimic');
+            const sUser = interaction.options.getUser('mimic');
+            const sInitial = interaction.options.getString('token');
 
             // If a user is supplied, use the keyed weights for that user instead
-            if (user) {
-                const fw = (await d.foKeyedWeights)[user.id];
-                const sw = (await d.soKeyedWeights)[user.id];
-                if (!fw || !sw) return interaction.reply({
-                    embeds: [textEmbed(`No weights found for user ${user}.`)],
-                    ephemeral: true
-                });
+            const sfw = sUser
+                ? (await d.foKeyedWeights)[sUser.id]
+                : await d.foWeights;
+            const sw = sUser
+                ? (await d.soKeyedWeights)[sUser.id]
+                : await d.soWeights;
 
-                const init = predictFOFromWeights(fw)[0];
-                const sTokens = predictSOFromWeights(sw, init);
-                return interaction.reply({
-                    content: sTokens.join(' '),
-                    allowedMentions: { parse: [] }
-                });
-            }
+            // TODO?
+            if (!sfw || !sw) return interaction.reply({
+                embeds: [textEmbed(`No weights found for user ${sUser}.`)],
+                ephemeral: true
+            });
 
-            const init = predictFOFromWeights(await d.foWeights)[0];
-            const sTokens = predictSOFromWeights(await d.soWeights, init);
+            // If an initial token is supplied, make sure it is in the dataset
+            if (sInitial && !sfw.has(sInitial)) return interaction.reply({
+                embeds: [textEmbed(`Token \`${sInitial}\` is not a start token in weights.`)],
+                ephemeral: true
+            });
+
+            const init = sInitial ?? predictFOFromWeights(sfw)[0];
+            const sTokens = predictSOFromWeights(sw, init);
             return interaction.reply({
                 content: sTokens.join(' '),
                 allowedMentions: { parse: [] }
