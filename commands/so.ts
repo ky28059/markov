@@ -1,7 +1,7 @@
 import type { Command } from '../util/commands';
 import { InteractionContextType, SlashCommandBuilder } from 'discord.js';
 import { textEmbed } from '../util/embeds';
-import { predictFOFromWeights, predictSOFromWeights } from '../util/predict';
+import { predictSOFromWeights, predictFOOnce } from '../util/predict';
 
 
 export default {
@@ -42,7 +42,7 @@ export default {
             flags: 'Ephemeral'
         });
 
-        const init = uInit ?? predictFOFromWeights(fw)[0];
+        const init = uInit ?? predictFOOnce(fw);
         const sTokens = predictSOFromWeights(sw, init);
         return interaction.reply({
             content: sTokens.join(' '),

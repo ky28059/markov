@@ -22,6 +22,11 @@ export function predictFOFromWeights(weights: Weights, initial?: string | null) 
     }
 }
 
+export function predictFOOnce(weights: Weights, initial?: string | null) {
+    const w = [...weights.get(initial ?? EOF)!.entries()];
+    return weightedRandom(w);
+}
+
 /**
  * Same as `predictFOFromWeights`, but using second-order weights instead. Since this is
  * second-order, we need an initial token to start; then, we apply [tok1, tok2] -> tok3
