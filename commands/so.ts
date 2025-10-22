@@ -2,6 +2,7 @@ import type { Command } from '../util/commands';
 import { InteractionContextType, SlashCommandBuilder } from 'discord.js';
 import { textEmbed } from '../util/embeds';
 import { predictSOFromWeights, predictFOOnce } from '../util/predict';
+import { EOF } from '../util/train';
 
 
 export default {
@@ -37,7 +38,7 @@ export default {
         });
 
         // If an initial token is supplied, make sure it is in the dataset
-        if (uInit && !fw.has(uInit)) return interaction.reply({
+        if (uInit && !fw.get(EOF)!.has(uInit)) return interaction.reply({
             embeds: [textEmbed(`Token \`${uInit}\` is not a start token in weights.`)],
             flags: 'Ephemeral'
         });
