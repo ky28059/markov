@@ -1,5 +1,6 @@
 import { REST, Routes } from 'discord.js';
 import commands from './commands';
+import { servers } from './config';
 
 
 const payload = commands.map(d => d.data.toJSON());
@@ -12,18 +13,12 @@ const rest = new REST().setToken(process.env.TOKEN!);
         console.log('Started refreshing application (/) commands.');
 
         // Register server commands
-        await rest.put(
-            Routes.applicationGuildCommands(clientId, '511675552386777099'),
-            { body: payload }
-        );
-        await rest.put(
-            Routes.applicationGuildCommands(clientId, '749361934515699722'),
-            { body: payload }
-        );
-        await rest.put(
-            Routes.applicationGuildCommands(clientId, '1137980132880040029'),
-            { body: payload }
-        );
+        for (const id of servers) {
+            await rest.put(
+                Routes.applicationGuildCommands(clientId, id),
+                { body: payload }
+            );
+        }
 
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {

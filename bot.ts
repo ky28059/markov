@@ -1,9 +1,8 @@
 import { Client } from 'discord.js';
 import { loadKeyedWeights, loadWeights } from './util/data';
 import commandList from './commands';
+import { servers } from './config';
 
-
-const servers = ['511675552386777099', '749361934515699722', '1137980132880040029'];
 
 const weights = Object.fromEntries(servers.map((id) => [id, {
     foWeights: loadWeights('first_ord_words', id),
