@@ -12,6 +12,7 @@
     "start": "node -r ts-node/register --env-file=.env bot.ts",
     "fetch": "node -r ts-node/register --env-file=.env scripts/fetchMessages.ts",
     "train": "npm run train:global && npm run train:keyed",
+    "train:all": "ts-node scripts/trainAll.ts",
     "train:global": "npm run train:fo && npm run train:so",
     "train:fo": "ts-node scripts/trainFOMarkov.ts",
     "train:so": "ts-node scripts/trainSOMarkov.ts",
