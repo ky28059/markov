@@ -9,6 +9,7 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
+    "gen:heatmap": "ts-node scripts/genHeatmap.ts",
     "start": "node -r ts-node/register --env-file=.env bot.ts",
     "fetch": "node -r ts-node/register --env-file=.env scripts/fetchMessages.ts",
     "train": "npm run train:global && npm run train:keyed",
