@@ -10,7 +10,7 @@ import { writeFile } from 'node:fs/promises';
     const messages = await getMessages(id);
     const counts: Record<string, number> = {};
 
-    for (let i = 1; i < 365; i++) {
+    for (let i = 1; i <= 365; i++) {
         for (let j = 0; j < 24; j++) {
             const d = new Date();
             d.setFullYear(2025, 0, 1);
