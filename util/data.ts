@@ -2,6 +2,11 @@ import { readFile, writeFile } from 'node:fs/promises';
 import type { SerializedWeights, Weights } from './train';
 
 
+export async function getMostRecent(id: string) {
+    const raw = await readFile(`./data/${id}/most_recent.json`);
+    return JSON.parse(raw.toString()) as Record<string, string>;
+}
+
 export async function getMessages(id: string) {
     const raw = await readFile(`./data/${id}/messages.json`);
     return JSON.parse(raw.toString()) as [number, string][];
