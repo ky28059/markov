@@ -1,4 +1,4 @@
-import { Client, Message, TextBasedChannel } from 'discord.js';
+import { Client, Collection, Guild, GuildBasedChannel, Message, TextBasedChannel } from 'discord.js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { getMessages, getMostRecent } from '../util/data';
 
@@ -25,6 +25,22 @@ async function fetchAllMessages(channel: TextBasedChannel, after?: string) {
     return ret;
 }
 
+async function fetchAllChannels(guild: Guild) {
+    const [channels, activeThreads] = await Promise.all([
+        guild.channels.fetch(),
+        guild.channels.fetchActiveThreads()
+    ]);
+
+    const pt = await Promise.all(channels.map(async (c) => {
+        if (!c?.viewable || !('threads' in c)) return;
+        return c.threads.fetchArchived(); // TODO: pagination?
+    })); // TODO: optimize?
+
+    return (channels as Collection<string, GuildBasedChannel>)
+        .concat(activeThreads.threads)
+        .concat(...pt.filter(r => r).map(r => r!.threads));
+}
+
 client.on('clientReady', async () => {
     const id = process.argv[2] ?? '511675552386777099';
     console.log('Fetching messages for', id);
@@ -36,7 +52,7 @@ client.on('clientReady', async () => {
     const messages = await getMessages(id);
     const mostRecent = await getMostRecent(id);
 
-    const channels = guild.channels.cache; // await guild.channels.fetch();
+    const channels = await fetchAllChannels(guild);
     console.log('Starting fetch...')
 
     await Promise.all(channels.map(async (channel) => {

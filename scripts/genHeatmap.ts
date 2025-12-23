@@ -32,5 +32,5 @@ import { writeFile } from 'node:fs/promises';
 
     const csv = 'date,count\n' + Object.entries(counts).map(([date, count]) => `${date},${count}`)
         .join('\n');
-    await writeFile('./heatmap.csv', csv);
+    await writeFile(`./heatmap_${id}.csv`, csv);
 })();
