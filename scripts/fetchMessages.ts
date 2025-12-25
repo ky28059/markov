@@ -1,6 +1,7 @@
-import { Client, Collection, Guild, GuildBasedChannel, Message, TextBasedChannel } from 'discord.js';
+import { Client, Collection, Guild, GuildBasedChannel } from 'discord.js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { getMessages, getMostRecent } from '../util/data';
+import { fetchAllMessages } from '../util/scrape';
 
 
 const client = new Client({
@@ -13,17 +14,6 @@ const client = new Client({
         "MessageContent"
     ],
 });
-
-async function fetchAllMessages(channel: TextBasedChannel, after?: string) {
-    let ret: Message[] = [];
-
-    while (true) {
-        const messages = await channel.messages.fetch({ limit: 100, after: ret[0]?.id ?? after });
-        if (messages.size === 0) break;
-        ret.unshift(...messages.values());
-    }
-    return ret;
-}
 
 async function fetchAllChannels(guild: Guild) {
     const [channels, activeThreads] = await Promise.all([
