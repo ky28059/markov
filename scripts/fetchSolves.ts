@@ -49,6 +49,7 @@ client.on('clientReady', async () => {
 function remapCategoryName(c: string) {
     if (c === 're') return 'rev';
     if (c === 'other') return 'misc';
+    if (c === 'pyjail') return 'jail';
     return c;
 }
 
