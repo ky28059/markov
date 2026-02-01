@@ -27,7 +27,9 @@ export async function trainFOWeights(messages: [number, string][]) {
     for (const [ts, message] of messages) {
         // Create a scaled s in [0.0, 1.0] and we weight the message ~ to s^2.
         const scale = (ts - minTs) / (maxTs - minTs);
-        const weight = Math.floor((scale ** 2) * GRANULARITY);
+        const weight = minTs === maxTs
+            ? 1
+            : Math.floor((scale ** 2) * GRANULARITY);
 
         const tokens = getTokens(message);
         if (!tokens.length) continue;
@@ -61,7 +63,9 @@ export async function trainSOWeights(messages: [number, string][]) {
     for (const [ts, message] of messages) {
         // Create a scaled s in [0.0, 1.0] and we weight the message ~ to s^2.
         const scale = (ts - minTs) / (maxTs - minTs);
-        const weight = Math.floor((scale ** 2) * GRANULARITY);
+        const weight = minTs === maxTs
+            ? 1
+            : Math.floor((scale ** 2) * GRANULARITY);
 
         const tokens = getTokens(message);
         if (!tokens.length) continue;
