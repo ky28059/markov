@@ -1,6 +1,6 @@
 import { Client } from 'discord.js';
 import { loadKeyedWeights, loadWeights } from './util/data';
-import commandList from './commands';
+import commandList, { serverCommands } from './commands';
 import { servers } from './config';
 
 
@@ -26,7 +26,7 @@ const client = new Client({
     allowedMentions: { repliedUser: false }
 });
 
-const commands = Object.fromEntries(commandList.map((c) => [c.data.name, c]))
+const commands = Object.fromEntries(commandList.concat(serverCommands).map((c) => [c.data.name, c]))
 
 client.once('clientReady', async () => {
     console.log(`Logged in as ${client.user?.tag}!`);
@@ -35,7 +35,12 @@ client.once('clientReady', async () => {
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    const command = commands[interaction.commandName];
+    const raw = commands[interaction.commandName];
+    if (!raw) return;
+
+    const command = 'commands' in raw
+        ? raw.commands[interaction.options.getSubcommand()]
+        : raw
     if (!command) return;
 
     const d = weights[interaction.guildId!];
@@ -45,7 +50,12 @@ client.on('interactionCreate', async (interaction) => {
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isAutocomplete()) return;
 
-    const command = commands[interaction.commandName];
+    const raw = commands[interaction.commandName];
+    if (!raw) return;
+
+    const command = 'commands' in raw
+        ? raw.commands[interaction.options.getSubcommand()]
+        : raw
     if (!command?.autocomplete) return;
 
     const d = weights[interaction.guildId!];
