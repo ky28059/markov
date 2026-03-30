@@ -34,7 +34,7 @@ export default {
         const init = uInit ?? predictFOOnce(fw);
         const sTokens = predictSOFromWeights(sw, init);
         return interaction.reply({
-            content: sTokens.join(' '),
+            content: sTokens.join(' ').replaceAll(/httpsimage:\/\/(.+?)(?=\s|$)/g, '[httpsimage://$1](https://$1)'),
             allowedMentions: { parse: [] }
         });
     }
