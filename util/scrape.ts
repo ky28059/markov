@@ -14,8 +14,6 @@ export async function fetchAllMessages(channel: TextBasedChannel, after?: string
             before: !after ? ret.at(-1)?.id : undefined
         });
 
-        console.log(messages.at(0)?.id);
-
         if (messages.size === 0) break;
         if (after)
             ret.unshift(...messages.values());
