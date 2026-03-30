@@ -3,8 +3,6 @@ import commands, { serverCommands } from './commands';
 import { servers } from './config';
 
 
-const payload = commands.map(d => d.data.toJSON());
-
 const clientId = '973385182566580344';
 const rest = new REST().setToken(process.env.TOKEN!);
 
@@ -14,16 +12,15 @@ const rest = new REST().setToken(process.env.TOKEN!);
 
         // Register server commands
         for (const id of servers) {
+            const c = id === '511675552386777099'
+                ? commands.concat(serverCommands)
+                : commands;
+
             await rest.put(
                 Routes.applicationGuildCommands(clientId, id),
-                { body: payload }
+                { body: c.map(d => d.data.toJSON()) }
             );
         }
-
-        await rest.put(
-            Routes.applicationGuildCommands(clientId, '511675552386777099'),
-            { body: serverCommands.map(d => d.data.toJSON()) }
-        );
 
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
